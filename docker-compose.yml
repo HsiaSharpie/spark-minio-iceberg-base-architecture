@@ -1,0 +1,105 @@
+services:
+  postgresql:
+    image: bitnami/postgresql:16.3.0
+    container_name: postgresql
+    restart: always
+    environment:
+      - POSTGRESQL_PASSWORD=${PG_PASSWROD}
+      - POSTGRESQL_DATABASE=${DB_NAME}
+    # volumes:
+      # - ./pg_data:/bitnami/postgresql
+    ports:
+      - 5432:5432
+    networks:
+      iceberg_net:
+
+  metastore:
+    image: apache/hive:${HIVE_VERSION}
+    container_name: metastore
+    ports:
+      - "9083:9083"
+    environment:
+      SERVICE_NAME: metastore
+      DB_DRIVER: postgres
+      SERVICE_OPTS: >
+        -Djavax.jdo.option.verbose=true
+    volumes:
+      - warehouse:/opt/hive/data/warehouse
+      - ./hive/core-site.xml:/opt/hive/conf/core-site.xml
+      - ./hive/hive-site.xml:/opt/hive/conf/hive-site.xml
+      - ./hive/lib/postgresql-42.2.20.jar:/opt/hive/lib/postgresql-42.2.20.jar
+      - ./hive/lib/hadoop-aws-3.2.2.jar:/opt/hive/lib/hadoop-aws-3.2.2.jar
+      - ./hive/lib/aws-java-sdk-bundle-1.12.756.jar:/opt/hive/lib/aws-java-sdk-bundle-1.12.756.jar
+      - ./hive/lib/aws-java-sdk-1.12.756.jar:/opt/hive/lib/aws-java-sdk-1.12.756.jar
+      - ./hive/lib/aws-java-sdk-core-1.12.756.jar:/opt/hive/lib/aws-java-sdk-core-1.12.756.jar
+      - ./hive/lib/aws-java-sdk-s3-1.12.756.jar:/opt/hive/lib/aws-java-sdk-s3-1.12.756.jar
+      - ./hive/lib/aws-java-sdk-kms-1.12.756.jar:/opt/hive/lib/aws-java-sdk-kms-1.12.756.jar
+    depends_on:
+      - postgresql
+      - minio
+    networks:
+      iceberg_net:
+
+  spark-iceberg:
+    image: spark-iceberg
+    container_name: spark-iceberg
+    build: ./spark
+    networks:
+      iceberg_net:
+    depends_on:
+      - minio
+    volumes:
+      - ./spark/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+      - ./spark/lib/aws-java-sdk-bundle-1.12.756.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.756.jar
+      - ./spark/lib/hadoop-aws-3.2.2.jar:/opt/spark/jars/hadoop-aws-3.2.2.jar
+      - ./notebooks:/home/iceberg/notebooks/notebooks
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+    ports:
+      - 8889:8888
+      - 8080:8080
+      - 10000:10000
+      - 10001:10001
+      - 18080:18080
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+      - MINIO_DOMAIN=minio
+    networks:
+      iceberg_net:
+        aliases:
+          - warehouse.minio
+    ports:
+      - 9001:9001
+      - 9000:9000
+    command: ["server", "/data", "--console-address", ":9001"]
+    
+  mc:
+    depends_on:
+      - minio
+    image: minio/mc
+    container_name: mc
+    networks:
+      iceberg_net:
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc config host add minio http://minio:9000 admin password) do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc rm -r --force minio/warehouse;
+      /usr/bin/mc mb minio/warehouse;
+      /usr/bin/mc policy set public minio/warehouse;
+      tail -f /dev/null
+      "
+networks:
+  iceberg_net:
+volumes:
+  warehouse:

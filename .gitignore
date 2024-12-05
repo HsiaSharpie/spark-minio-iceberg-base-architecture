@@ -1,0 +1,2 @@
+spark/lib/*.jar
+hive/lib/*.jar

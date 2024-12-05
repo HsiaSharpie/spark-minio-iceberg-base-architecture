@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property>
+        <name>hive.security.metastore.authorization.manager</name>
+        <value>org.apache.hadoop.hive.ql.security.authorization.StorageBasedAuthorizationProvider</value>
+    </property>
+    <property>
+        <name>hive.security.metastore.authenticator.manager</name>
+        <value>org.apache.hadoop.hive.ql.security.HadoopDefaultMetastoreAuthenticator</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>org.postgresql.Driver</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:postgresql://postgresql:5432/metastore_db</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>postgres</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>E3bhE3bh</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.verbose</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>fs.s3a.connection.ssl.enabled</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>s3a://warehouse/wh/</value>
+    </property>
+    <property>
+        <name>fs.s3a.path.style.access</name>
+        <value>true</value>
+    </property>
+    <!-- <property>
+        <name>metastore.thrift.uris</name>
+        <value>thrift://metastore:9083</value>
+    </property> -->
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://metastore:9083</value>
+    </property>
+    <property>
+        <name>hive.stats.jdbc.timeout</name>
+        <value>30</value>
+    </property>
+    <property>
+        <name>hive.stats.retries.wait</name>
+        <value>1000</value>
+    </property>
+</configuration>
