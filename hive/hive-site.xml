@@ -40,10 +40,6 @@
         <name>fs.s3a.path.style.access</name>
         <value>true</value>
     </property>
-    <!-- <property>
-        <name>metastore.thrift.uris</name>
-        <value>thrift://metastore:9083</value>
-    </property> -->
     <property>
         <name>hive.metastore.uris</name>
         <value>thrift://metastore:9083</value>

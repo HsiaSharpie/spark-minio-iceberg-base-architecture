@@ -6,12 +6,10 @@ services:
     environment:
       - POSTGRESQL_PASSWORD=${PG_PASSWROD}
       - POSTGRESQL_DATABASE=${DB_NAME}
-    # volumes:
-      # - ./pg_data:/bitnami/postgresql
     ports:
       - 5432:5432
     networks:
-      iceberg_net:
+      spark_minio_iceberg_minio_net:
 
   metastore:
     image: apache/hive:${HIVE_VERSION}
@@ -38,14 +36,14 @@ services:
       - postgresql
       - minio
     networks:
-      iceberg_net:
+      spark_minio_iceberg_minio_net:
 
   spark-iceberg:
     image: spark-iceberg
     container_name: spark-iceberg
     build: ./spark
     networks:
-      iceberg_net:
+      spark_minio_iceberg_minio_net:
     depends_on:
       - minio
     volumes:
@@ -72,7 +70,7 @@ services:
       - MINIO_ROOT_PASSWORD=password
       - MINIO_DOMAIN=minio
     networks:
-      iceberg_net:
+      spark_minio_iceberg_minio_net:
         aliases:
           - warehouse.minio
     ports:
@@ -86,7 +84,7 @@ services:
     image: minio/mc
     container_name: mc
     networks:
-      iceberg_net:
+      spark_minio_iceberg_minio_net:
     environment:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
@@ -99,7 +97,16 @@ services:
       /usr/bin/mc policy set public minio/warehouse;
       tail -f /dev/null
       "
+  
+  trino-coordinator:
+    image: 'trinodb/trino:457'
+    hostname: trino-coordinator
+    ports:
+      - '8081:8080'
+    volumes:
+      - ./hive/conf:/etc/trino/conf
+      - ./trino/etc/catalog:/etc/trino/catalog
 networks:
-  iceberg_net:
+  spark_minio_iceberg_minio_net:
 volumes:
   warehouse:
