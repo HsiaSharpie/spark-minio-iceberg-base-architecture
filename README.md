@@ -36,7 +36,7 @@
 ## 前置條件
 
 - 安裝 Docker 與 Docker Compose
-- 已安裝 Java
+- 安裝 Spark / Hadoop / Postgres Driver 等需要使用的 jar 檔
 
 ## 快速開始
 
