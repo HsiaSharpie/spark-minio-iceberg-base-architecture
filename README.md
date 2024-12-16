@@ -7,7 +7,7 @@
 2. **MinIO**：作為對象存儲系統，支援 S3 API。
 3. **Apache Iceberg**：管理大規模資料集的表格格式。
 4. **Hive Metastore**：作為 Iceberg 的元數據存儲，並與 Trino 共用以進行即時 SQL 查詢。
-5. **Trino 整合**：透過共享的 Hive Metastore 提供即時的查詢與分析能力。
+5. **Trino**：透過共享的 Hive Metastore 提供即時的查詢與分析能力。
 
 ## 系統架構
 
