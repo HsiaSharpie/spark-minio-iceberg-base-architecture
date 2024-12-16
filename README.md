@@ -1,4 +1,4 @@
-# spark-minio-iceberg-base-architecture
+# spark-minio-iceberg-trino-base-architecture
 
 提供了一個整合 Apache Spark、MinIO 和 Apache Iceberg 的參考架構與設置，相較於使用 Iceberg Rest 作為 Catalog，替換了以 Hive metastore 管理 catalog，metastore 是以 Postgres 架構，更換為 Hive metastore 的主要想法來自於 Trino 可共用這個 metastore，以支援即時查詢分析。
 
