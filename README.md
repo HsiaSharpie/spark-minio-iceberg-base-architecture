@@ -42,7 +42,7 @@
 
 1. 複製此儲存庫：
    ```bash
-   git clone https://github.com/your-username/spark-minio-iceberg-hive.git
+   git clone https://github.com/HsiaSharpie/spark-minio-iceberg-trino-base-architecture.git
    ```
 
 2. 啟動 Docker 化環境：
