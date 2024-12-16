@@ -1,6 +1,6 @@
 # spark-minio-iceberg-trino-base-architecture
 
-提供了一個整合 Apache Spark、MinIO 和 Apache Iceberg 的參考架構與設置，相較於使用 Iceberg Rest 作為 Catalog，替換了以 Hive metastore 管理 catalog，metastore 是以 Postgres 架構，更換為 Hive metastore 的主要想法來自於 Trino 可共用這個 metastore，以支援即時查詢分析。
+前陣子在工作不斷地使用到 Trino，過去也一直透過 Spark 與 LakeHouse Data Format (Delta Table, Iceberg)處理資料，所以稍微整合了一下 Spark / Iceberg / Trino，並以 Minio 作為存放空間，相較於使用 Iceberg Rest 作為 Catalog，替換了以 Hive metastore 管理 catalog，metastore 是以 Postgres 架構，更換為 Hive metastore 的主要想法來自於 Trino 可共用這個 metastore，以支援即時查詢分析。
 
 ### 主要架構
 1. **Apache Spark**：用於大規模資料的批量處理與進階分析。
